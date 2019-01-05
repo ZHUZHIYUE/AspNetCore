@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Routing
 
             var hostMetadata = Assert.IsType<HostMetadata>(Assert.Single(endpointModel.Metadata));
 
-            Assert.Equal("consoto.com:8080", hostMetadata.Hosts.Single());
+            Assert.Equal("contoso.com:8080", hostMetadata.Hosts.Single());
         }
 
         private class TestEndpointConventionBuilder : IEndpointConventionBuilder
