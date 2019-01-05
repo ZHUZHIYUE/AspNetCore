@@ -98,6 +98,9 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
         public long? MaxRequestBodySize { get; set; }
         public bool AllowSynchronousIO { get; set; }
 
+        // Cache teh HttpContext per Connection/Http2Stream
+        internal DefaultHttpContext HttpContext { get; set; }
+
         /// <summary>
         /// The request id. <seealso cref="HttpContext.TraceIdentifier"/>
         /// </summary>

@@ -35,7 +35,7 @@ namespace Microsoft.AspNetCore.Http
                 throw new ArgumentNullException(nameof(featureCollection));
             }
 
-            var httpContext = new DefaultHttpContext(featureCollection);
+            var httpContext = CreateHttpContext(featureCollection);
             if (_httpContextAccessor != null)
             {
                 _httpContextAccessor.HttpContext = httpContext;
@@ -47,7 +47,12 @@ namespace Microsoft.AspNetCore.Http
             return httpContext;
         }
 
-        public void Dispose(HttpContext httpContext)
+        protected virtual HttpContext CreateHttpContext(IFeatureCollection featureCollection)
+        {
+            return new DefaultHttpContext(featureCollection);
+        }
+
+        public virtual void Dispose(HttpContext httpContext)
         {
             if (_httpContextAccessor != null)
             {
