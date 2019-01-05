@@ -146,14 +146,12 @@ namespace RoutingWebSite
                     response.ContentType = "text/plain";
                     return response.WriteAsync(hostsDisplay);
                 });
-            //if (hosts != null && hosts.Length > 0)
+
+            conventionBuilder.Add(endpointBuilder =>
             {
-                conventionBuilder.Add(endpointBuilder =>
-                {
-                    endpointBuilder.Metadata.Add(new HostAttribute(hosts));
-                    endpointBuilder.DisplayName += " HOST: " + hostsDisplay;
-                });
-            }
+                endpointBuilder.Metadata.Add(new HostMetadata(hosts));
+                endpointBuilder.DisplayName += " HOST: " + hostsDisplay;
+            });
 
             return conventionBuilder;
         }

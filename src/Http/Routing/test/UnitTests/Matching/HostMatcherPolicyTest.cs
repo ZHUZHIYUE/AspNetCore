@@ -37,7 +37,7 @@ namespace Microsoft.AspNetCore.Routing.Matching
             // Arrange
             var endpoints = new[]
             {
-                CreateEndpoint("/", new HostAttribute(Array.Empty<string>())),
+                CreateEndpoint("/", new HostMetadata(Array.Empty<string>())),
             };
 
             var policy = CreatePolicy();
@@ -55,8 +55,8 @@ namespace Microsoft.AspNetCore.Routing.Matching
             // Arrange
             var endpoints = new[]
             {
-                CreateEndpoint("/", new HostAttribute(Array.Empty<string>())),
-                CreateEndpoint("/", new HostAttribute(new[] { "localhost", })),
+                CreateEndpoint("/", new HostMetadata(Array.Empty<string>())),
+                CreateEndpoint("/", new HostMetadata(new[] { "localhost", })),
             };
 
             var policy = CreatePolicy();
@@ -74,14 +74,14 @@ namespace Microsoft.AspNetCore.Routing.Matching
             // Arrange
             var endpoints = new[]
             {
-                CreateEndpoint("/", new HostAttribute(new[] { "*:5000", "*:5001", })),
-                CreateEndpoint("/", new HostAttribute(Array.Empty<string>())),
+                CreateEndpoint("/", new HostMetadata(new[] { "*:5000", "*:5001", })),
+                CreateEndpoint("/", new HostMetadata(Array.Empty<string>())),
                 CreateEndpoint("/", hostMetadata: null),
-                CreateEndpoint("/", new HostAttribute(new[] { "*.contoso.com:*" })),
-                CreateEndpoint("/", new HostAttribute(new[] { "*.sub.contoso.com:*" })),
-                CreateEndpoint("/", new HostAttribute(new[] { "www.contoso.com:*", })),
-                CreateEndpoint("/", new HostAttribute(new[] { "www.contoso.com:5000", })),
-                CreateEndpoint("/", new HostAttribute(new[]{ "*:*", })),
+                CreateEndpoint("/", new HostMetadata(new[] { "*.contoso.com:*" })),
+                CreateEndpoint("/", new HostMetadata(new[] { "*.sub.contoso.com:*" })),
+                CreateEndpoint("/", new HostMetadata(new[] { "www.contoso.com:*", })),
+                CreateEndpoint("/", new HostMetadata(new[] { "www.contoso.com:5000", })),
+                CreateEndpoint("/", new HostMetadata(new[]{ "*:*", })),
             };
 
             var policy = CreatePolicy();
