@@ -276,19 +276,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
 
         protected HttpResponseHeaders HttpResponseHeaders { get; } = new HttpResponseHeaders();
 
-        internal HttpContext InitializeHttpContext()
-        {
-            if (_httpContext is null)
-            {
-                _httpContext = new DefaultHttpContext(this);
-            }
-            else
-            {
-                _httpContext.Initialize(this);
-            }
-
-            return _httpContext;
-        }
+        internal HttpContext HttpContext => _httpContext;
 
         public void InitializeStreams(MessageBody messageBody)
         {
@@ -552,14 +540,24 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
 
                 InitializeStreams(messageBody);
 
-                var httpContext = application.CreateContext(this);
+                // Initialize the HttpContext before we call into the IHttpApplication
+                if (_httpContext is null)
+                {
+                    _httpContext = new DefaultHttpContext(this);
+                }
+                else
+                {
+                    _httpContext.Initialize(this);
+                }
+
+                var context = application.CreateContext(this);
 
                 try
                 {
                     KestrelEventSource.Log.RequestStart(this);
 
                     // Run the application code for this request
-                    await application.ProcessRequestAsync(httpContext);
+                    await application.ProcessRequestAsync(context);
 
                     if (!_requestAborted)
                     {
@@ -626,7 +624,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
                     await FireOnCompleted();
                 }
 
-                application.DisposeContext(httpContext, _applicationException);
+                application.DisposeContext(context, _applicationException);
 
                 // Even for non-keep-alive requests, try to consume the entire body to avoid RSTs.
                 if (!_requestAborted && _requestRejectedException == null && !messageBody.IsEmpty)
