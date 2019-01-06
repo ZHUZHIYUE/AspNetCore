@@ -52,7 +52,7 @@ namespace Microsoft.AspNetCore.Http
             return new DefaultHttpContext(featureCollection);
         }
 
-        public virtual void Dispose(HttpContext httpContext)
+        public void Dispose(HttpContext httpContext)
         {
             if (_httpContextAccessor != null)
             {

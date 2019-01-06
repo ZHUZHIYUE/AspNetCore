@@ -41,15 +41,5 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal
             // Since Kestrel is registered by default, we need to fallback to the default behavior
             return base.CreateHttpContext(featureCollection);
         }
-
-        public override void Dispose(HttpContext httpContext)
-        {
-            if (httpContext.Features is HttpProtocol protocol)
-            {
-                protocol.HttpContext.Uninitialize();
-            }
-
-            base.Dispose(httpContext);
-        }
     }
 }

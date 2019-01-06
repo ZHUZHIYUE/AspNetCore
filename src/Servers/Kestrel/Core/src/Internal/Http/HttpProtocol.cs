@@ -362,6 +362,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
 
             _responseBytesWritten = 0;
 
+            HttpContext?.Uninitialize();
+
             OnReset();
         }
 
