@@ -51,13 +51,92 @@ namespace Microsoft.AspNetCore.Http
         public virtual void Initialize(IFeatureCollection features)
         {
             _features = new FeatureReferences<FeatureInterfaces>(features);
-            _request = InitializeHttpRequest();
-            _response = InitializeHttpResponse();
+
+            if (GetType() != typeof(DefaultHttpContext))
+            {
+                _request = InitializeHttpRequest();
+                _response = InitializeHttpResponse();
+            }
+            else
+            {
+                if (_request is DefaultHttpRequest defaultHttpRequest)
+                {
+                    defaultHttpRequest.Initialize(this);
+                }
+                else
+                {
+                    _request = new DefaultHttpRequest(this);
+                }
+
+                if (_response is DefaultHttpResponse defaultHttpResponse)
+                {
+                    defaultHttpResponse.Initialize(this);
+                }
+                else
+                {
+                    _response = new DefaultHttpResponse(this);
+                }
+
+                // Only set the ConnectionInfo if it was already allocated
+                if (_connection is DefaultConnectionInfo defaultConnectionInfo)
+                {
+                    defaultConnectionInfo.Initialize(features);
+                }
+            }
         }
 
         public virtual void Uninitialize()
         {
-            _features = default(FeatureReferences<FeatureInterfaces>);
+            _features = default;
+
+            if (GetType() != typeof(DefaultHttpContext))
+            {
+                // Avoid breaing backwards compatibility with the type check
+                UninitializeDerivedType();
+            }
+            else
+            {
+                UninitializeForReuse();
+            }
+        }
+
+        private void UninitializeForReuse()
+        {
+            if (_request is DefaultHttpRequest defaultHttpRequest)
+            {
+                defaultHttpRequest.Uninitialize();
+            }
+
+            if (_response is DefaultHttpResponse defaultHttpResponse)
+            {
+                defaultHttpResponse.Uninitialize();
+            }
+
+            // Even though this field is lazy, we will reuse it if it was created to avoid
+            // future allocations
+            if (_connection is DefaultConnectionInfo defaultConnectionInfo)
+            {
+                defaultConnectionInfo.Uninitialize();
+            }
+
+            // These fields are lazily initialized so we null them out
+
+            if (_authenticationManager != null)
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                _authenticationManager = null;
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+
+            // It's unlikely that this would be reused
+            if (_websockets != null)
+            {
+                _websockets = null;
+            }
+        }
+
+        private void UninitializeDerivedType()
+        {
             if (_request != null)
             {
                 UninitializeHttpRequest(_request);

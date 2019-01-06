@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.Http.Internal
         public virtual void Uninitialize()
         {
             _context = null;
-            _features = default(FeatureReferences<FeatureInterfaces>);
+            _features = default;
         }
 
         private IHttpResponseFeature HttpResponseFeature =>
