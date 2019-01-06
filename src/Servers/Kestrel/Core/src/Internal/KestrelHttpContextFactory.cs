@@ -44,9 +44,9 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal
 
         public override void Dispose(HttpContext httpContext)
         {
-            if (httpContext is DefaultHttpContext defaultHttpContext)
+            if (httpContext.Features is HttpProtocol protocol)
             {
-                defaultHttpContext.Uninitialize();
+                protocol.HttpContext.Uninitialize();
             }
 
             base.Dispose(httpContext);
