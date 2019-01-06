@@ -24,18 +24,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal
         {
             if (featureCollection is HttpProtocol protocol)
             {
-                // First request, the HttpContext is null, so make a new one
-                if (protocol.HttpContext == null)
-                {
-                    protocol.HttpContext = new DefaultHttpContext(featureCollection);
-                }
-                else
-                {
-                    // Otherwise just initialize the feature collection on the existing connection
-                    protocol.HttpContext.Initialize(featureCollection);
-                }
-
-                return protocol.HttpContext;
+                return protocol.InitializeHttpContext();
             }
 
             // Since Kestrel is registered by default, we need to fallback to the default behavior

@@ -63,6 +63,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
         private long _responseBytesWritten;
 
         private readonly HttpConnectionContext _context;
+        private DefaultHttpContext _httpContext;
 
         protected string _methodText = null;
         private string _scheme = null;
@@ -97,9 +98,6 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
         public bool HasStartedConsumingRequestBody { get; set; }
         public long? MaxRequestBodySize { get; set; }
         public bool AllowSynchronousIO { get; set; }
-
-        // Caches the HttpContext allocation
-        internal DefaultHttpContext HttpContext { get; set; }
 
         /// <summary>
         /// The request id. <seealso cref="HttpContext.TraceIdentifier"/>
@@ -278,6 +276,20 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
 
         protected HttpResponseHeaders HttpResponseHeaders { get; } = new HttpResponseHeaders();
 
+        internal HttpContext InitializeHttpContext()
+        {
+            if (_httpContext is null)
+            {
+                _httpContext = new DefaultHttpContext(this);
+            }
+            else
+            {
+                _httpContext.Initialize(this);
+            }
+
+            return _httpContext;
+        }
+
         public void InitializeStreams(MessageBody messageBody)
         {
             if (_streams == null)
@@ -362,7 +374,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
 
             _responseBytesWritten = 0;
 
-            HttpContext?.Uninitialize();
+            _httpContext?.Uninitialize();
 
             OnReset();
         }
