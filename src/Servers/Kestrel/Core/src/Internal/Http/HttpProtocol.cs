@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -63,7 +64,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
         private long _responseBytesWritten;
 
         private readonly HttpConnectionContext _context;
-        private DefaultHttpContext _httpContext;
+        private ReusableHttpContext _httpContext;
 
         protected string _methodText = null;
         private string _scheme = null;
@@ -543,7 +544,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
                 // Initialize the HttpContext before we call into the IHttpApplication
                 if (_httpContext is null)
                 {
-                    _httpContext = new DefaultHttpContext(this);
+                    _httpContext = new ReusableHttpContext(this);
                 }
                 else
                 {
